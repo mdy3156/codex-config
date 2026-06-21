@@ -1,0 +1,14 @@
+auth.json
+config.toml
+history.jsonl
+installation_id
+session_index.jsonl
+*.sqlite
+*.sqlite-*
+cache/
+plugins/
+sessions/
+shell_snapshots/
+tmp/
+.tmp/
+models_cache.json

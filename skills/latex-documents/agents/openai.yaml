@@ -1,0 +1,4 @@
+interface:
+  display_name: "LaTeX Documents"
+  short_description: "Compile and edit LaTeX documents consistently"
+  default_prompt: "Use $latex-documents to edit and compile this LaTeX document with the right recipe."

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Technical Paper Writing"
+  short_description: "Revise papers for formal style and terminology"
+  default_prompt: "Use $technical-paper-writing to revise this paper draft for formal style, concision, and terminology consistency."
