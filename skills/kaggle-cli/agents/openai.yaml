@@ -1,0 +1,4 @@
+interface:
+  display_name: "Kaggle CLI"
+  short_description: "Use Kaggle CLI for competitions and Discussions"
+  default_prompt: "Use $kaggle-cli to inspect Kaggle CLI help and research Orbit Wars competition assets and Discussions safely."
