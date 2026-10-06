@@ -1,6 +1,6 @@
 ---
 name: latex-documents
-description: Work with LaTeX documents and papers, especially Japanese documents that use the user's LaTeX Workshop recipes. Use when editing .tex files, choosing uplatex/lualatex/pdflatex from `% !LW recipe=...`, compiling with latexmk, diagnosing LaTeX build errors, or formatting numbered display equations with the user's equation-numbering conventions.
+description: Edit or build LaTeX documents using the user's LaTeX Workshop recipes and equation-numbering conventions.
 ---
 
 # LaTeX Documents
@@ -20,7 +20,7 @@ Follow the user's VS Code LaTeX Workshop build behavior and math formatting conv
    % !LW recipe=pdflatex
    ```
 
-3. Prefer the declared recipe. If no `% !LW recipe=...` exists, infer only when obvious from the existing document; otherwise ask before adding or changing an engine selector.
+3. Prefer the declared recipe. If no `% !LW recipe=...` exists, infer only when obvious from the existing document; otherwise clarify the engine if compilation depends on it. Use `--recipe` for an inferred engine without adding or changing the file selector.
 4. Compile with LaTeX Workshop-equivalent `latexmk` commands and `build` as the output directory.
 
 Use the bundled helper when possible:
@@ -37,7 +37,7 @@ python3 "${CODEX_HOME:-$HOME/.codex}/skills/latex-documents/scripts/latex_worksh
 
 Recipe mapping:
 
-- `uplatex`: `latexmk -pdfdvi -e "$latex='uplatex %O %S'; $bibtex='upbibtex %O %B'; $dvipdf='dvipdfmx %O -o %D %S'" -synctex=1 -interaction=nonstopmode -file-line-error`
+- `uplatex`: `latexmk -pdfdvi` with the helper's `uplatex`, `upbibtex`, and `dvipdfmx` configuration. Use the helper to preserve literal Perl variables in `-e`.
 - `lualatex`: `latexmk -lualatex -synctex=1 -interaction=nonstopmode -file-line-error`
 - `pdflatex`: `latexmk -pdf -synctex=1 -interaction=nonstopmode -file-line-error`
 
@@ -76,5 +76,5 @@ Avoid `eqnarray`. Prefer `amsmath`/`mathtools` conventions already present in th
 
 - Preserve Japanese punctuation, macros, labels, bibliography commands, and package order unless changing them is required.
 - Keep labels stable. When adding labels, match the local naming style.
-- After edits, compile the root file when practical and report the exact recipe used.
+- After changes that affect typesetting or build behavior, compile the root file when practical and report the recipe used. A comment-only edit does not require a build.
 - If compilation fails, fix the first meaningful LaTeX error before chasing later cascade errors.

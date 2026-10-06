@@ -1,16 +1,19 @@
 ---
 name: "pdf"
-description: "Use when tasks involve reading, creating, or reviewing PDF files where rendering and layout matter; first check for same-directory PDF-to-Markdown conversion directories `filename.mineru/` and `filename.marker/`, prefer MinerU output for searchable text when available, verify important details against the original PDF by rendering pages with Poppler, and use the local PDF tools virtual environment at `~/.venvs/pdf-tools` for Python-based generation and extraction."
+description: "Read, create, or review PDFs when text extraction, page rendering, or layout fidelity matters."
 ---
 
 # PDF Skill
 
-## When to use
+## Local tools
 
-- Read or review PDF content where layout and visuals matter.
-- Create PDFs programmatically with reliable formatting.
-- Validate final rendering before delivery.
-- Compare PDF-to-Markdown conversions against the original PDF.
+Use `~/.venvs/pdf-tools/bin/python` for Python-based PDF generation and extraction when available; use the project environment if it already provides the required tools. Poppler's `pdftoppm` can render selected pages for visual inspection:
+
+```bash
+pdftoppm -f 3 -l 3 -scale-to 1600 -png input.pdf /tmp/pdf-page
+```
+
+Choose the pages needed for the request. After layout changes, inspect the affected renders and correct clipping, pagination, or font issues before delivery. Report unavailable render checks rather than claiming visual verification.
 
 ## PDF-to-Markdown conversions
 

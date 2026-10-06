@@ -1,74 +1,34 @@
 ---
 name: kaggle-cli
-description: "Use Kaggle CLI safely for Kaggle competition workflows: inspect installed command help, browse and read Discussions, download competition data, manage notebooks/kernels and datasets, submit entries, check leaderboard/submission state, and document research artifacts. Use when working with Kaggle or this Orbit Wars repository, especially when credentials must remain private and raw research evidence must be kept separate from summaries."
+description: Use or troubleshoot the Kaggle CLI, including commands, authentication, metadata, downloads, uploads, and submissions.
 ---
 
 # Kaggle CLI
 
-## Core Rules
+Use the installed `kaggle` command and the task-specific reference below. Inspect `kaggle --help` or the relevant subcommand's help when syntax or availability is uncertain. Live help takes precedence over this reference snapshot; report meaningful version differences.
 
-Treat the installed CLI as the source of truth. Before using any command, inspect
-the relevant help:
+## Reference Map
 
-```bash
-kaggle --help
-kaggle competitions --help
-kaggle kernels --help
-kaggle datasets --help
-kaggle forums --help
-```
+Read only the reference needed for the user's task:
 
-Never read or print credential files or secret values. Do not inspect
-`~/.kaggle/kaggle.json`, `.env`, API keys, tokens, private keys, or shell
-history. If authentication fails, report the command error without exposing
-credential contents.
+- [Competitions](references/competitions.md) - competition discovery, files, downloads, submissions, leaderboards, simulations, pages, topics.
+- [Datasets](references/datasets.md) - dataset search, files, downloads, metadata, create/version/status/delete, topics.
+- [Kernels](references/kernels.md) - notebook/script discovery, metadata, push/pull, outputs, status, logs, delete.
+- [Models](references/models.md) - model records, metadata, create/get/update/delete, model topics.
+- [Model Variations](references/model_variations.md) - create and manage framework-specific model variations.
+- [Model Variation Versions](references/model_variations_versions.md) - create, list, download, inspect, and delete variation versions.
+- [Files](references/files.md) - inbox uploads, resumable uploads, directory compression behavior.
+- [Forums](references/forums.md) - global discussion forums, topics, and comments.
+- [Benchmarks](references/benchmarks.md) - benchmark auth/init, task push/run/status/download/log/model flows, benchmark topics.
+- [Configuration](references/configuration.md) - config file, default path, proxy, default competition.
+- [Authentication](references/auth.md) - OAuth login, access token printing, revocation, token/key sources.
+- [Quota](references/quota.md) - weekly GPU/TPU accelerator quota.
+- [Search](references/search.md) - unified cross-content search over competitions, datasets, notebooks, models, users, and discussions.
 
-Prefer read-only discovery commands before write commands. Avoid delete,
-overwrite, public publishing, expensive downloads, and submissions unless the
-user explicitly requested that action.
+## Operating guidance
 
-## Workflow
-
-1. Identify the competition slug, output path, and intended artifact.
-2. Run `--help` for the relevant command group in the installed CLI.
-3. Use a small read-only command to confirm the command works.
-4. Save downloaded or generated artifacts under this repository's documented
-   ignored paths, usually `data/`, `outputs/`, or the relevant `docs/*/raw/`.
-5. Write summaries under the matching `docs/*/summaries/` path when doing
-   research.
-
-For detailed command patterns, read [references/commands.md](references/commands.md).
-
-## Discussions and Forums
-
-Use the current Kaggle CLI Discussion commands. For competition-specific
-research, prefer `kaggle competitions topics list/show`. Use `kaggle forums`
-and `kaggle forums topics list/show` to browse across general forums. Inspect
-the exact subcommand help first because older installed versions may not include
-these commands.
-
-Save command output as raw evidence before synthesizing it:
-
-- raw captures: `docs/discussions/raw/`
-- synthesized notes: `docs/discussions/summaries/`
-
-For every summary, record the source URL or reconstructable topic reference,
-topic title and ID, collection date, key claims, implementation ideas,
-verification status, and next actions. Label claims as `verified`,
-`speculative`, or `needs local validation`; Discussion statements are not
-ground truth.
-
-If Discussion commands are missing, report that the installed CLI must be
-updated. Do not substitute Gemini CLI as a Discussion retrieval path. Kaggle
-notebooks remain under `kaggle kernels`.
-
-## Repository Hygiene
-
-Follow this repository's `AGENTS.md`.
-
-- keep reusable commands centered in `src/orbit_wars/cli.py`, not a repo
-  `scripts/` directory
-- keep raw evidence and summaries separate
-- keep generated outputs out of git
-- do not commit credentials, competition data, checkpoints, submissions, or raw
-  downloaded artifacts unless the repository explicitly allows it
+- Use the existing installation; install the CLI only when execution is requested and it is missing.
+- Use the relevant `init` command for new metadata when available. Variation-version metadata starts with `models variations init`; there is no `models variations versions init` in this snapshot.
+- Authentication choices and token locations are in the authentication reference. Keep tokens out of chat and logs.
+- Carry out requested local preparation and validation without repeated approval. Downloads, uploads, execution, publication, submissions, and deletions have different effects: perform only the operations covered by the request and inspect their results. A metadata edit alone does not authorize publication or submission.
+- On authentication, quota, or version failures, resolve the specific blocker or report it. Do not retry external mutations indefinitely.

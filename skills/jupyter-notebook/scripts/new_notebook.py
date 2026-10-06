@@ -16,7 +16,8 @@ def slugify(text: str) -> str:
 
 def find_repo_root(start: Path) -> Path:
     for candidate in (start, *start.parents):
-        if (candidate / ".git").exists():
+        marker = candidate / ".git"
+        if marker.is_file() or (marker / "HEAD").is_file():
             return candidate
     return start
 
@@ -107,7 +108,7 @@ def main() -> None:
 
     script_path = Path(__file__).resolve()
     skill_dir = script_path.parents[1]
-    repo_root = find_repo_root(skill_dir)
+    repo_root = find_repo_root(Path.cwd())
 
     notebook = load_template(skill_dir, args.kind)
     update_title(notebook, args.kind, args.title)

@@ -12,6 +12,6 @@ When editing `.ipynb` files programmatically:
 - Keep `cells` as an ordered list; do not reorder unless intentional.
 - For code cells, set `execution_count` to `null` when unknown.
 - For code cells, set `outputs` to an empty list when scaffolding.
-- For markdown cells, keep `cell_type="markdown"` and `metadata={}`.
+- New markdown cells use `cell_type="markdown"` and usually `metadata={}`; preserve existing metadata on edited cells.
 
 Prefer scaffolding from the bundled templates or `new_notebook.py` (for example, `$CODEX_HOME/skills/jupyter-notebook/scripts/new_notebook.py`) instead of hand-authoring raw notebook JSON.
