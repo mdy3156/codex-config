@@ -7,12 +7,11 @@ import sys
 import time
 import urllib.request
 
-TOPIC = "mdy-codex-9f"
-
 
 def is_subagent(thread_id: str) -> bool:
     pattern = os.path.expanduser(
-        f"~/.codex/sessions/*/*/*/rollout-*{thread_id}*.jsonl"
+        os.path.join(os.environ.get("CODEX_HOME", "~/.codex"),
+                     f"sessions/*/*/*/rollout-*{thread_id}*.jsonl")
     )
 
     # notify と rollout 書き込みが僅かに前後する可能性への対策
@@ -52,7 +51,8 @@ def is_subagent(thread_id: str) -> bool:
 
 
 def main():
-    if len(sys.argv) < 2:
+    topic = os.environ.get("NTFY_TOPIC")
+    if not topic or len(sys.argv) < 2:
         return
 
     data = json.loads(sys.argv[1])
@@ -72,7 +72,7 @@ def main():
     )
 
     req = urllib.request.Request(
-        f"https://ntfy.sh/{TOPIC}",
+        f"https://ntfy.sh/{topic}",
         data=message.encode("utf-8"),
         method="POST",
         headers={
