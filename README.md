@@ -1,14 +1,10 @@
 # codex-config
 
-個人用のCodex設定、自作Skills、プラグイン、ntfy通知を管理します。公開Skillsとプラグインの本体はGitに含めず、取得元と導入するものの一覧を保存します。
-
-**`install.sh` と `update.sh` は、実行するたびに配布元の最新版を取得して適用します。** バックグラウンドでの定期更新や、過去のコミットへの固定は行いません。
+Codexの共通設定、Skills、プラグイン、ntfy通知を管理する個人用リポジトリです。
 
 ## 導入
 
-必要なもの：Git、Python 3.11以降、Node.js 22.20.0以降とnpm、`codex plugin` に対応したCodex CLI。検証したCLIはCodex 0.162.1、Vercel skills 1.7.2です。
-
-先にCodexアプリとCLIを導入し、同じアカウントでログインしてアプリを一度起動してください。現在の26個にはアプリ付属プラグインが含まれるため、全体の再現には対応するアプリ環境が必要です。スクリプト自体はmacOS・Linux・WSL向けです。各Skillが使うCLIと `codegraph` は別途導入してください。
+各環境にGit、Python 3.11以降、Node.js 22.20.0以降とnpm、`codex plugin` に対応したCodex CLIが必要です。Codexへのログインを先に済ませてください。
 
 ```sh
 git clone https://github.com/mdy3156/codex-config.git
@@ -17,101 +13,66 @@ cd codex-config
 ./install.sh
 ```
 
-`python3` が古い環境では `PYTHON=python3.14 ./install.sh` のように指定できます。配置先は `$CODEX_HOME`、未設定なら `~/.codex`。`--codex-home /path/to/codex` でも指定できます。リポジトリは配置先とは別のディレクトリにcloneしてください。
+配置先は `$CODEX_HOME`、未設定なら `~/.codex` です。`--codex-home /path/to/codex` で変更できます。リポジトリは配置先とは別のディレクトリにcloneしてください。Pythonを指定する場合は `PYTHON=python3.14 ./install.sh` のように実行します。
+
+Windowsアプリ向けにはWindows側のPowerShellで同じリポジトリから `python manage.py install` を実行します。更新は `python manage.py update` です。WSLはLinux側の `~/.codex`、Windowsアプリは `%USERPROFILE%\.codex` を使うため、それぞれの環境で実行してください。
+
+共通プラグイン14個はCLIで自動導入します。アプリ付属11件の有効状態は `plugins.json` の `app_plugins` で別に管理し、その環境で提供されるものに適用します。付属設定を反映する環境では、先にアプリを一度起動してください。本体と実行環境の導入・更新はアプリが管理します。
 
 ## 更新
 
 ```sh
-git pull --ff-only  # このリポジトリの設定・依存一覧を更新
-./update.sh        # 公開Skills・プラグインの最新版を取得し、設定も適用
+git pull --ff-only
+./update.sh
 ```
 
-導入と更新は同じ処理です。どちらも `--dry-run` に対応し、通信・書き込みなしで対象を表示できます。以前の「固定コミットを書き換えてから再導入する」操作は不要です。
+導入と更新は同じ処理です。実行するたびに公開Skillsとプラグインの最新版を取得し、設定も適用します。アプリ付属プラグインは、そのアプリが提供する版を使います。Codexアプリ・CLI自体は別途更新してください。
 
-最新版を追うため、別の日に実行した環境同士でバージョンが違うことはあります。同じ一覧のSkills・プラグインを、その時点で取得できる版で揃える方針です。アプリ付属プラグインの最新版は、導入先アプリが提供する版です。Codexアプリ・CLI自体の更新は別途行ってください。
+`--dry-run` は通信・書き込みをせず、処理の予定を表示します。
 
-## 利用する公開ツール
+## 管理するファイル
 
-| 対象 | 使用する仕組み |
+| ファイル | 用途 |
 | --- | --- |
-| 公開Skills | [Vercelのskills CLI](https://github.com/vercel-labs/skills) の `npx --yes skills@latest add` |
-| プラグイン | [Codex公式CLI](https://learn.chatgpt.com/docs/cli/reference) の `plugin marketplace add` / `upgrade` と `plugin add` |
-| 設定・通知・自作Skills | このリポジトリの配置・バックアップ処理 |
+| [config.toml](config.toml) | 共通設定 |
+| [AGENTS.md](AGENTS.md) | 資料作成に使うSkillsの選択 |
+| [skills/requirements.json](skills/requirements.json) | 公開Skillsの名前と取得元 |
+| [skills/custom/](skills/custom/) | 自作Skills |
+| [plugins.json](plugins.json) | 共通プラグインとアプリ付属の設定 |
+| [notify.py](notify.py) | ntfy通知 |
 
-公開ツールをそのまま呼び出し、取得・更新処理を独自に複製しません。Skillsは一時ディレクトリへ取得・検証した後、指定したCodex環境へ配置します。これにより、既存ファイルのバックアップと `$CODEX_HOME` への導入を両立させています。`npx skills update -g` はこのリポジトリの更新手順ではありません。
+一覧と取得元は [Skills](docs/skills.md)・[プラグイン](docs/plugins.md) を参照してください。各Skillが使うCLIや `codegraph` は別途導入してください。
 
-## 管理するもの
-
-| 場所 | 用途 |
-| --- | --- |
-| `skills/custom/` | このリポジトリで直接保守するSkills |
-| [skills/requirements.json](skills/requirements.json) | 公開Skill名と、skills CLIへ渡す取得元 |
-| [plugins.json](plugins.json) | プラグインID、有効状態、マーケットプレイスの取得元 |
-| `config.toml` / `AGENTS.md` / `notify.py` | 共通設定、文章の書き方、通知プログラム |
-
-公開Skillsは16個。以前の独自改変版7個も公開版を使います。出典は [Skills一覧](docs/skills.md) を参照してください。公開Skillの追加は `requirements.json` に名前と取得元を追記して `./install.sh` を実行します。
-
-```json
-{
-  "skill-name": "https://github.com/owner/repository.git"
-}
-```
-
-GitHubリポジトリ内の特定フォルダを指定するURLや、公開された `SKILL.md` の直接URLも利用できます。新しい自作Skillは `skills/custom/<名前>/SKILL.md` に作成してください。公開Skillと名前を重複させないでください。
-
-プラグインを追加・削除したり有効状態を変えたりした後は、現在の一覧を保存します。
+公開Skillsを追加するには `skills/requirements.json` に名前と取得元を追記し、`./install.sh` を実行します。プラグインの一覧を保存・確認する場合は次のコマンドを使います。
 
 ```sh
-python3.14 manage.py snapshot-plugins
-git diff -- plugins.json
+python3 manage.py snapshot-plugins  # 現在の一覧をplugins.jsonに保存
+python3 manage.py check-plugins     # 共通プラグインの導入状態と、その環境のアプリ付属設定を確認
 ```
 
-`python3.14 manage.py check-plugins` で、記録したプラグインが導入済みで有効状態も一致するか確認できます。バージョン固定や最新版判定のコマンドではありません。両コマンドは `--codex-home` に対応しています。配布方法と一覧は [プラグイン詳細](docs/plugins.md) を参照してください。
+`snapshot-plugins` の実行後は `git diff -- plugins.json` を確認してください。他の環境向けのアプリ付属設定は保持します。両コマンドとも `--codex-home` に対応しています。
 
-## 既存環境の扱い
+## 既存設定とバックアップ
 
-- `config.toml` はリポジトリの設定で**全体を置き換えます**。通知のパスと、プラグイン・マーケットプレイスの設定は導入時に生成します。
-- `AGENTS.md` も `$CODEX_HOME/AGENTS.md` にコピーして置き換えます。文章の書き方を別の環境でも使うための共通指示です。
-- 公開Skillsは `$CODEX_HOME/skills/<名前>/` にコピーし、自作Skillsと `notify.py` はリポジトリへのリンクにします。リポジトリを移動したら再導入してください。
-- 変更前の設定・同名Skillは `$CODEX_HOME/backups/codex-config/<日時>/` に退避します。内容が同じなら再配置しません。
-- アプリ付属マーケットプレイスの確認と全公開Skillsの取得・検証が終わるまで、既存の設定は変更しません。
-- 設定とSkillsの配置後にプラグインを更新します。途中で失敗した場合はエラー終了します。原因を解消して再実行してください。導入済みプラグインは自動で巻き戻しません。
-- 一覧にないSkills、認証情報、会話履歴は変更しません。一覧にないプラグインはアンインストールしませんが、設定全体の置き換えにより個別設定は引き継がれません。
+- `config.toml` と `AGENTS.md` は置き換えます。変更前のファイルと同名Skillsは `$CODEX_HOME/backups/codex-config/<日時>/` に退避します。
+- 公開Skillsはコピーします。自作Skillsと `notify.py` はmacOS・Linux・WSLではリンク、Windowsではコピーします。リンクを使う環境でリポジトリを移動したら再実行してください。
+- 認証情報、会話履歴、一覧外のSkillsは変更しません。一覧外のプラグインも削除しませんが、設定ファイル内の個別設定は引き継ぎません。
+- プラグインの更新途中で失敗した場合、導入済みの分は自動で巻き戻しません。原因を解消して再実行してください。
 
-マシン固有の絶対パス、プロジェクトの信頼設定、フック承認履歴、`rules/` の実行許可ルールは導入対象外です。各環境でログイン・外部サービスへの再認証・必要な承認を行ってください。
-
-復元する場合はCodexを終了し、表示されたバックアップ内のファイルを元の場所に戻します。導入後の同名ディレクトリやリンクを先に外してから、退避したディレクトリを戻してください。
-
-## 日本語・英語の文章
-
-[AGENTS.md](AGENTS.md) に、スライド・論文・研究レポート・調査結果を作るときの手順を記載しています。
-
-- 日本語は `natural-japanese` を使い、付属のlintで翻訳調などを確認します。lintには [uv](https://docs.astral.sh/uv/getting-started/installation/) が必要です。初回実行時にPythonの依存パッケージを取得します。uvがない場合はSkillの手動チェックリストを使います。
-- 英語は `humanizer` で言い回しを整え、`proofread` で文法・綴り・自然さを確認します。スライドの見出しや図表内の英文も対象です。
-- スライドでは短い句を使えます。数値・条件・研究上の主張は保ち、読みやすい表現に直します。校正の説明は、依頼された場合に示します。
-
-Skillsは次のターンから利用できます。共通指示の反映を確実にするには、新しい会話を始めてください。「この結果を英語の研究スライドにして」「この調査結果を読みやすい日本語のレポートにして」のように、普段どおり依頼できます。
-
-英文の確認はCodexによる校正です。独立した文法検査ツールは導入していません。実際の資料で読みやすさや見落としを確認し、必要なら検査を追加します。
+復元する場合はCodexを終了し、復元先にある同名のファイル・ディレクトリ・リンクを外してから、バックアップを元の場所へ戻してください。
 
 ## 通知
 
-タイトルは `codex-config｜完了：通知タイトルを改善して` のように、作業ディレクトリ名と最後の依頼の先頭行を使います。依頼文がなければ最終回答、それもなければ「ターン完了」を使い、100文字以内に収めます。本文は最終回答です。ここでいう完了はCodexの1ターンの完了です。
-
-サブエージェントの完了は通知しません。メタデータを確認できなければ、メイン通知を取りこぼさないよう送信します。
+通知を使う場合は、Codex起動時に環境変数 `NTFY_TOPIC` を設定します。互換用の `CODEX_NTFY_TOPIC` も使えます。どちらも未設定なら送信しません。デスクトップアプリにもこの環境変数を渡してください。
 
 ```sh
-python3 notify.py --dry-run '{"type":"agent-turn-complete","cwd":"/work/codex-config","input-messages":["通知タイトルを改善して"],"last-assistant-message":"通知を改善しました。"}'
+export NTFY_TOPIC="your-private-codex-topic"
 ```
 
-通知を使う場合は、Codex起動時の環境変数に `NTFY_TOPIC="your-private-codex-topic"` を設定してください。未設定・空の場合は送信しません。`NTFY_TOPIC` が未設定の場合のみ、互換用の `CODEX_NTFY_TOPIC` も使えます。設定した場合、依頼の先頭行と最終回答がntfyへ送信されます。デスクトップアプリにもこの環境変数を渡してください。
+メインエージェントの1ターンが終わると、依頼の先頭行と最終回答をntfyへ送信します。
 
-通知フィールドは [Codexの公式仕様](https://learn.chatgpt.com/docs/config-file/config-advanced)、日本語タイトルの送信形式は [ntfyのJSON API](https://docs.ntfy.sh/publish/#publish-as-json) に従っています。
-
-## 検証
+## テスト
 
 ```sh
-python3.14 -m unittest discover -s tests -v
+python3 -m unittest discover -s tests -v
 ```
-
-テストは一時ディレクトリとCLIの代替処理を使い、更新の適用、公開版への置き換え、バックアップ、再実行、取得失敗時の保護、プラグインの記録・照合、通知内容を検証します。普段の設定の変更やntfyへの実送信は行いません。
