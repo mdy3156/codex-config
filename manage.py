@@ -57,7 +57,7 @@ def atomic_write(path, content):
 
 
 def requirements():
-    data = json.loads(REQUIREMENTS.read_text())
+    data = json.loads(REQUIREMENTS.read_text(encoding='utf-8'))
     for name, source in data.items():
         if not re.fullmatch(r"[a-z0-9][a-z0-9-]*", name):
             raise ValueError(f"Invalid skill name: {name}")
@@ -74,10 +74,10 @@ def fetch_skills(specs, temporary):
     for source, names in groups.items():
         print(f"Fetch latest skills: {', '.join(names)}", flush=True)
         result = subprocess.run(
-            ['npx', '--yes', 'skills@latest', 'add', source, '--skill', *names,
+            [shutil.which('npx.cmd' if sys.platform == 'win32' else 'npx') or 'npx', '--yes', 'skills@latest', 'add', source, '--skill', *names,
              '--agent', 'codex', '--copy', '--yes'],
             cwd=temporary, env={**os.environ, 'DISABLE_TELEMETRY': '1'},
-            capture_output=True, text=True)
+            capture_output=True, text=True, encoding='utf-8', errors='replace')
         if result.returncode:
             raise ValueError(f"skills CLI failed for {source}:\n{result.stdout}\n{result.stderr}")
         for name in names:
@@ -139,11 +139,11 @@ def install(home, dry_run=False):
     if (home / "skills").resolve().is_relative_to(ROOT):
         raise ValueError("The skills destination points inside the repository; use a separate directory.")
     specs = requirements()
-    plugins = plugin_setup.validate(json.loads(PLUGINS.read_text()))
+    plugins = plugin_setup.validate(json.loads(PLUGINS.read_text(encoding='utf-8')))
     custom = {p.parent.name: p.parent for p in sorted((ROOT / "skills/custom").glob("*/SKILL.md"))}
     if custom.keys() & specs.keys():
         raise ValueError(f"Duplicate skill names: {sorted(custom.keys() & specs.keys())}")
-    config = (ROOT / "config.toml").read_text()
+    config = (ROOT / "config.toml").read_text(encoding='utf-8')
     instructions = (ROOT / "AGENTS.md").read_bytes()
     if {'notify', 'plugins', 'marketplaces'} & tomllib.loads(config).keys():
         raise ValueError("config.toml must omit notify/plugins/marketplaces; the installer generates them.")
@@ -156,22 +156,23 @@ def install(home, dry_run=False):
             print(f"Would link local skill: {name}")
         for name, source in specs.items():
             print(f"Would fetch latest {name} from {source} into {home / 'skills' / name}")
-        for selector, spec in plugins['plugins'].items():
-            print(f"Would install/update plugin {selector}")
-        if plugins['plugins']:
-            print('Runtime marketplaces must be provided by the destination Codex app; plugin selections and enabled states will be checked.')
+        for selector in plugins['plugins']:
+            print(f"Would install/update common plugin: {selector}")
+        for selector in plugins.get('app_plugins', {}):
+            print(f"Would apply app preference when offered by this environment's catalog: {selector}")
         print("Existing conflicting files would be backed up. No network access or writes performed.")
         return
-    runtime = plugin_setup.runtime_roots(home, plugins)
+    plugins, runtime = plugin_setup.resolve(home, plugins)
     config += '\n' + plugin_setup.config_sections(plugins, runtime)
     tomllib.loads(config)
     # Finish skill downloads and validation before touching the user's configuration.
     with tempfile.TemporaryDirectory(prefix="codex-config-install-") as directory:
         staged = fetch_skills(specs, Path(directory))
+        link = sys.platform != 'win32'
         targets = [(home / "config.toml", config.encode(), False),
                    (home / "AGENTS.md", instructions, False),
-                   (home / "notify.py", ROOT / "notify.py", True)]
-        targets += [(home / "skills" / name, source, True) for name, source in custom.items()]
+                   (home / "notify.py", ROOT / "notify.py" if link else (ROOT / "notify.py").read_bytes(), link)]
+        targets += [(home / "skills" / name, source, link) for name, source in custom.items()]
         targets += [(home / "skills" / name, source, False) for name, source in staged.items()]
         apply_install(home, targets)
     plugin_setup.install(home, plugins)
@@ -193,11 +194,15 @@ def main():
         if args.command in ("install", "update"):
             install(args.codex_home, args.dry_run)
         elif args.command == 'snapshot-plugins':
-            data = plugin_setup.snapshot(args.codex_home.expanduser().absolute())
+            previous = plugin_setup.validate(json.loads(PLUGINS.read_text(encoding='utf-8')))
+            data = plugin_setup.snapshot(args.codex_home.expanduser().absolute(), previous)
             atomic_write(PLUGINS, (json.dumps(data, ensure_ascii=False, indent=2) + '\n').encode())
-            print(f"Recorded {len(data['plugins'])} installed plugins in {PLUGINS}")
+            print(f"Recorded {len(data['plugins'])} common plugins and {len(data['app_plugins'])} app preferences in {PLUGINS}")
         else:
-            plugin_setup.check(args.codex_home.expanduser().absolute(), plugin_setup.validate(json.loads(PLUGINS.read_text())))
+            home = args.codex_home.expanduser().absolute()
+            plugins = plugin_setup.validate(json.loads(PLUGINS.read_text(encoding='utf-8')))
+            plugins, _ = plugin_setup.resolve(home, plugins)
+            plugin_setup.check(home, plugins)
     except (OSError, ValueError, KeyError, TypeError, subprocess.CalledProcessError) as error:
         print(f"Error: {error}", file=sys.stderr)
         return 1

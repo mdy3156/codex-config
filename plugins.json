@@ -24,22 +24,7 @@
     "app-69ef18c674308191a2f952431f91ea61@openai-curated-remote": {
       "enabled": true
     },
-    "browser@openai-bundled": {
-      "enabled": true
-    },
-    "code-review@openai-bundled": {
-      "enabled": true
-    },
-    "codex-app-tools@openai-bundled": {
-      "enabled": true
-    },
     "codex-security@openai-curated-remote": {
-      "enabled": true
-    },
-    "computer-use@openai-bundled": {
-      "enabled": true
-    },
-    "documents@openai-primary-runtime": {
       "enabled": true
     },
     "figma@openai-curated-remote": {
@@ -60,9 +45,6 @@
     "pages@openai-curated-remote": {
       "enabled": true
     },
-    "pdf@openai-primary-runtime": {
-      "enabled": true
-    },
     "plugin-creator@openai-curated-remote": {
       "enabled": true
     },
@@ -72,16 +54,39 @@
     "ponytail@ponytail": {
       "enabled": true
     },
-    "presentations@openai-primary-runtime": {
-      "enabled": true
-    },
     "sites@openai-curated-remote": {
       "enabled": true
     },
-    "spreadsheets@openai-primary-runtime": {
+    "superpowers@superpowers-dev": {
       "enabled": true
     },
-    "superpowers@superpowers-dev": {
+    "work-pets@openai-curated-remote": {
+      "enabled": true
+    }
+  },
+  "app_plugins": {
+    "browser@openai-bundled": {
+      "enabled": true
+    },
+    "code-review@openai-bundled": {
+      "enabled": true
+    },
+    "codex-app-tools@openai-bundled": {
+      "enabled": true
+    },
+    "computer-use@openai-bundled": {
+      "enabled": true
+    },
+    "documents@openai-primary-runtime": {
+      "enabled": true
+    },
+    "pdf@openai-primary-runtime": {
+      "enabled": true
+    },
+    "presentations@openai-primary-runtime": {
+      "enabled": true
+    },
+    "spreadsheets@openai-primary-runtime": {
       "enabled": true
     },
     "template-creator@openai-primary-runtime": {
@@ -91,9 +96,6 @@
       "enabled": true
     },
     "visualize@openai-bundled": {
-      "enabled": true
-    },
-    "work-pets@openai-curated-remote": {
       "enabled": true
     }
   }

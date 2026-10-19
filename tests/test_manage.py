@@ -109,6 +109,54 @@ shutil.copytree(source, pathlib.Path.cwd() / '.agents/skills/demo', symlinks=Tru
         self.assertEqual(config.read_text(), 'model = "previous"\n')
         self.assertFalse((self.home / 'backups').exists())
 
+    def test_cli_install_update_and_check_keep_app_preferences_without_requiring_app(self):
+        manifest = {
+            'marketplaces': {'openai-bundled': {'type': 'runtime'},
+                             'remote': {'type': 'remote'}},
+            'plugins': {'tool@remote': {'enabled': True}},
+            'app_plugins': {'browser@openai-bundled': {'enabled': True}},
+        }
+        (self.repo / 'plugins.json').write_text(json.dumps(manifest))
+        self.home.mkdir()
+        (self.home / 'config.toml').write_text('model = "previous"\n')
+        (self.home / 'AGENTS.md').write_text('Previous preferences.\n')
+        state = self.home / 'installed.json'
+        state.write_text(json.dumps([{'pluginId': 'tool@remote', 'enabled': True}]))
+        codex = self.bin / 'codex'
+        codex.write_text(f'''#!{sys.executable}
+import json, os, pathlib, sys
+assert sys.argv[1] == 'plugin' and sys.argv[-1] == '--json'
+args = sys.argv[2:-1]
+state = pathlib.Path(os.environ['CODEX_HOME']) / 'installed.json'
+if args == ['marketplace', 'list']:
+    result = {{'marketplaces': []}}
+elif args == ['add', 'tool@remote']:
+    state.write_text(json.dumps([{{'pluginId': 'tool@remote', 'enabled': True}}]))
+    result = {{'pluginId': 'tool@remote'}}
+elif args == ['list']:
+    result = {{'installed': json.loads(state.read_text()), 'available': []}}
+else:
+    raise AssertionError(args)
+print(json.dumps(result))
+''')
+        codex.chmod(0o755)
+        result = self.run_manage('install')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('browser@openai-bundled', result.stdout)
+        config = tomllib.loads((self.home / 'config.toml').read_text())
+        self.assertEqual(config['plugins'], {'tool@remote': {'enabled': True}})
+        self.assertNotIn('marketplaces', config)
+        self.assertEqual((self.home / 'skills/demo/SKILL.md').read_text(), 'original v2\n')
+        result = self.run_manage('update')
+        self.assertEqual(result.returncode, 0, result.stderr)
+        result = self.run_manage('check-plugins', '--codex-home', str(self.home))
+        self.assertEqual(result.returncode, 0, result.stderr)
+        state.write_text('[]')
+        result = self.run_manage('check-plugins', '--codex-home', str(self.home))
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn('tool@remote: missing', result.stderr)
+        self.assertEqual(json.loads((self.repo / 'plugins.json').read_text()), manifest)
+
     def test_apply_failure_restores_config_instructions_and_notify(self):
         self.home.mkdir()
         (self.home / 'config.toml').write_text('model = "previous"\n')

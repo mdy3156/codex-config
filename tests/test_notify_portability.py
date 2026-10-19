@@ -63,6 +63,22 @@ class NotifyTests(unittest.TestCase):
                                     capture_output=True, text=True)
             self.assertEqual(result.stdout.strip(), event)
 
+    def test_windows_copies_custom_skills_and_notifier_without_symlink_privileges(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary) / 'Windows Codex home'
+            empty = {'marketplaces': {}, 'plugins': {}, 'app_plugins': {}}
+            with patch.object(sys, 'platform', 'win32'), \
+                    patch.object(manage, 'fetch_skills', return_value={}), \
+                    patch.object(manage.plugin_setup, 'resolve', return_value=(empty, {})), \
+                    patch.object(manage.plugin_setup, 'install'):
+                manage.install(root)
+            self.assertFalse((root / 'notify.py').is_symlink())
+            self.assertEqual((root / 'notify.py').read_bytes(), (manage.ROOT / 'notify.py').read_bytes())
+            for source in (manage.ROOT / 'skills/custom').glob('*/SKILL.md'):
+                target = root / 'skills' / source.parent.name
+                self.assertFalse(target.is_symlink())
+                self.assertEqual((target / 'SKILL.md').read_bytes(), source.read_bytes())
+
 
 if __name__ == "__main__":
     unittest.main()
