@@ -30,9 +30,6 @@
     "code-review@openai-bundled": {
       "enabled": true
     },
-    "coderabbit@openai-curated-remote": {
-      "enabled": true
-    },
     "codex-app-tools@openai-bundled": {
       "enabled": true
     },

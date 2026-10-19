@@ -24,14 +24,13 @@
 
 ## 対象一覧
 
-正本は `plugins.json` です。今回取り込んだ26個はすべて有効です。
+正本は `plugins.json` です。今回取り込んだ25個はすべて有効です。
 
 | プラグインID | 配布方法 |
 | --- | --- |
 | `app-69ef18c674308191a2f952431f91ea61@openai-curated-remote` | リモート配信 |
 | `browser@openai-bundled` | アプリ付属 |
 | `code-review@openai-bundled` | アプリ付属 |
-| `coderabbit@openai-curated-remote` | リモート配信 |
 | `codex-app-tools@openai-bundled` | アプリ付属 |
 | `codex-security@openai-curated-remote` | リモート配信 |
 | `computer-use@openai-bundled` | アプリ付属 |
