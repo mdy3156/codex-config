@@ -1,0 +1,103 @@
+{
+  "marketplaces": {
+    "openai-curated-remote": {
+      "type": "remote"
+    },
+    "openai-bundled": {
+      "type": "runtime"
+    },
+    "openai-primary-runtime": {
+      "type": "runtime"
+    },
+    "ponytail": {
+      "type": "git",
+      "source": "https://github.com/DietrichGebert/ponytail.git",
+      "ref": "main"
+    },
+    "superpowers-dev": {
+      "type": "git",
+      "source": "https://github.com/obra/superpowers.git",
+      "ref": "main"
+    }
+  },
+  "plugins": {
+    "app-69ef18c674308191a2f952431f91ea61@openai-curated-remote": {
+      "enabled": true
+    },
+    "browser@openai-bundled": {
+      "enabled": true
+    },
+    "code-review@openai-bundled": {
+      "enabled": true
+    },
+    "coderabbit@openai-curated-remote": {
+      "enabled": true
+    },
+    "codex-app-tools@openai-bundled": {
+      "enabled": true
+    },
+    "codex-security@openai-curated-remote": {
+      "enabled": true
+    },
+    "computer-use@openai-bundled": {
+      "enabled": true
+    },
+    "documents@openai-primary-runtime": {
+      "enabled": true
+    },
+    "figma@openai-curated-remote": {
+      "enabled": true
+    },
+    "github@openai-curated-remote": {
+      "enabled": true
+    },
+    "google-calendar@openai-curated-remote": {
+      "enabled": true
+    },
+    "google-drive@openai-curated-remote": {
+      "enabled": true
+    },
+    "openai-templates@openai-curated-remote": {
+      "enabled": true
+    },
+    "pages@openai-curated-remote": {
+      "enabled": true
+    },
+    "pdf@openai-primary-runtime": {
+      "enabled": true
+    },
+    "plugin-creator@openai-curated-remote": {
+      "enabled": true
+    },
+    "plugin-management@openai-curated-remote": {
+      "enabled": true
+    },
+    "ponytail@ponytail": {
+      "enabled": true
+    },
+    "presentations@openai-primary-runtime": {
+      "enabled": true
+    },
+    "sites@openai-curated-remote": {
+      "enabled": true
+    },
+    "spreadsheets@openai-primary-runtime": {
+      "enabled": true
+    },
+    "superpowers@superpowers-dev": {
+      "enabled": true
+    },
+    "template-creator@openai-primary-runtime": {
+      "enabled": true
+    },
+    "unified-computer-use@openai-bundled": {
+      "enabled": true
+    },
+    "visualize@openai-bundled": {
+      "enabled": true
+    },
+    "work-pets@openai-curated-remote": {
+      "enabled": true
+    }
+  }
+}

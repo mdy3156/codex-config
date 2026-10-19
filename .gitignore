@@ -11,3 +11,6 @@ shell_snapshots/
 tmp/
 .tmp/
 models_cache.json
+.cache/
+__pycache__/
+*.pyc
