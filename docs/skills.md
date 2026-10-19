@@ -23,7 +23,6 @@
 ## ローカル管理
 
 - `latex-documents`：ユーザー固有のLaTeX Workshopレシピと数式番号の規約。
-- `review-agent`：以前は `.system/` に保存されていたレビュー用Skill。公開元を特定できなかったため、削除せず `custom/` で保持。
 
 `custom` は作者を断定する分類ではなく、このリポジトリで直接保守するという扱いです。
 
