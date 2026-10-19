@@ -47,9 +47,9 @@ git pull --ff-only  # このリポジトリの設定・依存一覧を更新
 | `skills/custom/` | このリポジトリで直接保守するSkills |
 | [skills/requirements.json](skills/requirements.json) | 公開Skill名と、skills CLIへ渡す取得元 |
 | [plugins.json](plugins.json) | プラグインID、有効状態、マーケットプレイスの取得元 |
-| `config.toml` / `notify.py` | 共通設定と通知プログラム |
+| `config.toml` / `AGENTS.md` / `notify.py` | 共通設定、文章の書き方、通知プログラム |
 
-公開Skillsは13個。以前の独自改変版7個も公開版を使います。出典は [Skills一覧](docs/skills.md) を参照してください。公開Skillの追加は `requirements.json` に名前と取得元を追記して `./install.sh` を実行します。
+公開Skillsは16個。以前の独自改変版7個も公開版を使います。出典は [Skills一覧](docs/skills.md) を参照してください。公開Skillの追加は `requirements.json` に名前と取得元を追記して `./install.sh` を実行します。
 
 ```json
 {
@@ -71,6 +71,7 @@ git diff -- plugins.json
 ## 既存環境の扱い
 
 - `config.toml` はリポジトリの設定で**全体を置き換えます**。通知のパスと、プラグイン・マーケットプレイスの設定は導入時に生成します。
+- `AGENTS.md` も `$CODEX_HOME/AGENTS.md` にコピーして置き換えます。文章の書き方を別の環境でも使うための共通指示です。
 - 公開Skillsは `$CODEX_HOME/skills/<名前>/` にコピーし、自作Skillsと `notify.py` はリポジトリへのリンクにします。リポジトリを移動したら再導入してください。
 - 変更前の設定・同名Skillは `$CODEX_HOME/backups/codex-config/<日時>/` に退避します。内容が同じなら再配置しません。
 - アプリ付属マーケットプレイスの確認と全公開Skillsの取得・検証が終わるまで、既存の設定は変更しません。
@@ -80,6 +81,18 @@ git diff -- plugins.json
 マシン固有の絶対パス、プロジェクトの信頼設定、フック承認履歴、`rules/` の実行許可ルールは導入対象外です。各環境でログイン・外部サービスへの再認証・必要な承認を行ってください。
 
 復元する場合はCodexを終了し、表示されたバックアップ内のファイルを元の場所に戻します。導入後の同名ディレクトリやリンクを先に外してから、退避したディレクトリを戻してください。
+
+## 日本語・英語の文章
+
+[AGENTS.md](AGENTS.md) に、スライド・論文・研究レポート・調査結果を作るときの手順を記載しています。
+
+- 日本語は `natural-japanese` を使い、付属のlintで翻訳調などを確認します。lintには [uv](https://docs.astral.sh/uv/getting-started/installation/) が必要です。初回実行時にPythonの依存パッケージを取得します。uvがない場合はSkillの手動チェックリストを使います。
+- 英語は `humanizer` で言い回しを整え、`proofread` で文法・綴り・自然さを確認します。スライドの見出しや図表内の英文も対象です。
+- スライドでは短い句を使えます。数値・条件・研究上の主張は保ち、読みやすい表現に直します。校正の説明は、依頼された場合に示します。
+
+Skillsは次のターンから利用できます。共通指示の反映を確実にするには、新しい会話を始めてください。「この結果を英語の研究スライドにして」「この調査結果を読みやすい日本語のレポートにして」のように、普段どおり依頼できます。
+
+英文の確認はCodexによる校正です。独立した文法検査ツールは導入していません。実際の資料で読みやすさや見落としを確認し、必要なら検査を追加します。
 
 ## 通知
 

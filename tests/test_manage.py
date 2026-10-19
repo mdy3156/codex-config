@@ -22,6 +22,7 @@ class ManageTests(unittest.TestCase):
         shutil.copy2(ROOT / 'plugin_setup.py', self.repo)
         (self.repo / 'plugins.json').write_text(json.dumps({'codex_version': 'test', 'marketplaces': {}, 'plugins': {}}))
         (self.repo / 'config.toml').write_text('model = "shared"\n')
+        (self.repo / 'AGENTS.md').write_text('Shared writing preferences.\n')
         (self.repo / 'notify.py').write_text('# notification script\n')
         custom = self.repo / 'skills/custom/mine'
         custom.mkdir(parents=True)
@@ -57,6 +58,7 @@ shutil.copytree(source, pathlib.Path.cwd() / '.agents/skills/demo', symlinks=Tru
         (old / 'SKILL.md').write_text('my old fork\n')
         (old / 'extra.txt').write_text('old customization')
         (self.home / 'config.toml').write_text('model = "previous"\n')
+        (self.home / 'AGENTS.md').write_text('Previous preferences.\n')
         (self.home / 'auth.json').write_text('untouched')
         (self.home / 'skills/unrelated').mkdir()
         result = self.run_manage('install')
@@ -65,6 +67,7 @@ shutil.copytree(source, pathlib.Path.cwd() / '.agents/skills/demo', symlinks=Tru
         self.assertFalse((old / 'extra.txt').exists())
         self.assertFalse(old.is_symlink())
         self.assertTrue((self.home / 'skills/mine').is_symlink())
+        self.assertEqual((self.home / 'AGENTS.md').read_text(), 'Shared writing preferences.\n')
         config = tomllib.loads((self.home / 'config.toml').read_text())
         self.assertEqual(config['model'], 'shared')
         self.assertEqual(config['notify'][0], sys.executable)
@@ -73,6 +76,7 @@ shutil.copytree(source, pathlib.Path.cwd() / '.agents/skills/demo', symlinks=Tru
         backups = list(self.home.glob('backups/codex-config/*'))
         self.assertEqual(len(backups), 1)
         self.assertEqual((backups[0] / 'skills/demo/SKILL.md').read_text(), 'my old fork\n')
+        self.assertEqual((backups[0] / 'AGENTS.md').read_text(), 'Previous preferences.\n')
         self.assertEqual(self.run_manage('install').returncode, 0)
         self.assertEqual(list(self.home.glob('backups/codex-config/*')), backups)
         self.assertFalse((self.repo / 'skills/upstream').exists())
@@ -81,15 +85,18 @@ shutil.copytree(source, pathlib.Path.cwd() / '.agents/skills/demo', symlinks=Tru
         shutil.rmtree(self.remote)
         result = self.run_manage('install', '--dry-run')
         self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn(str(self.home / 'AGENTS.md'), result.stdout)
         self.assertFalse(self.home.exists())
 
     def test_update_fetches_and_applies_latest_without_changing_requirements(self):
         before = self.requirements.read_bytes()
         self.assertEqual(self.run_manage('install').returncode, 0)
         (self.remote / 'demo/SKILL.md').write_text('new upstream content\n')
+        (self.repo / 'AGENTS.md').write_text('Updated writing preferences.\n')
         result = self.run_manage('update')
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertEqual((self.home / 'skills/demo/SKILL.md').read_text(), 'new upstream content\n')
+        self.assertEqual((self.home / 'AGENTS.md').read_text(), 'Updated writing preferences.\n')
         self.assertEqual(self.requirements.read_bytes(), before)
 
     def test_failed_fetch_leaves_existing_config_untouched(self):
@@ -102,15 +109,17 @@ shutil.copytree(source, pathlib.Path.cwd() / '.agents/skills/demo', symlinks=Tru
         self.assertEqual(config.read_text(), 'model = "previous"\n')
         self.assertFalse((self.home / 'backups').exists())
 
-    def test_apply_failure_restores_config_and_notify(self):
+    def test_apply_failure_restores_config_instructions_and_notify(self):
         self.home.mkdir()
         (self.home / 'config.toml').write_text('model = "previous"\n')
         (self.home / 'notify.py').write_text('previous notifier\n')
+        (self.home / 'AGENTS.md').write_text('Previous preferences.\n')
         (self.home / 'skills').write_text('blocks directory creation\n')
         result = self.run_manage('install')
         self.assertNotEqual(result.returncode, 0)
         self.assertEqual((self.home / 'config.toml').read_text(), 'model = "previous"\n')
         self.assertEqual((self.home / 'notify.py').read_text(), 'previous notifier\n')
+        self.assertEqual((self.home / 'AGENTS.md').read_text(), 'Previous preferences.\n')
         self.assertEqual((self.home / 'skills').read_text(), 'blocks directory creation\n')
 
     def test_rejects_path_escape_and_duplicate_name_before_install(self):

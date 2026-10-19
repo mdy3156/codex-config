@@ -144,13 +144,14 @@ def install(home, dry_run=False):
     if custom.keys() & specs.keys():
         raise ValueError(f"Duplicate skill names: {sorted(custom.keys() & specs.keys())}")
     config = (ROOT / "config.toml").read_text()
+    instructions = (ROOT / "AGENTS.md").read_bytes()
     if {'notify', 'plugins', 'marketplaces'} & tomllib.loads(config).keys():
         raise ValueError("config.toml must omit notify/plugins/marketplaces; the installer generates them.")
     command = [sys.executable, str(home / "notify.py"), "--codex-home", str(home)]
     config = "notify = " + json.dumps(command, ensure_ascii=False) + "\n\n" + config
     tomllib.loads(config)
     if dry_run:
-        print(f"Would replace {home / 'config.toml'} and link notify.py")
+        print(f"Would replace {home / 'config.toml'} and {home / 'AGENTS.md'} and link notify.py")
         for name in custom:
             print(f"Would link local skill: {name}")
         for name, source in specs.items():
@@ -168,6 +169,7 @@ def install(home, dry_run=False):
     with tempfile.TemporaryDirectory(prefix="codex-config-install-") as directory:
         staged = fetch_skills(specs, Path(directory))
         targets = [(home / "config.toml", config.encode(), False),
+                   (home / "AGENTS.md", instructions, False),
                    (home / "notify.py", ROOT / "notify.py", True)]
         targets += [(home / "skills" / name, source, True) for name, source in custom.items()]
         targets += [(home / "skills" / name, source, False) for name, source in staged.items()]

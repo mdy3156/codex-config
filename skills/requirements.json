@@ -1,15 +1,18 @@
 {
   "defuddle": "https://github.com/kepano/obsidian-skills.git",
+  "humanizer": "https://github.com/blader/humanizer.git",
   "japanese-tech-writing": "https://gist.githubusercontent.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d/raw/SKILL.md",
   "json-canvas": "https://github.com/kepano/obsidian-skills.git",
   "jupyter-notebook": "https://github.com/openai/skills.git",
   "kaggle-cli": "https://github.com/Kaggle/kaggle-cli.git",
   "knap": "https://github.com/kepano/obsidian-skills.git",
   "ml-paper-writing": "https://github.com/Orchestra-Research/AI-Research-SKILLs/tree/main/20-ml-paper-writing/ml-paper-writing",
+  "natural-japanese": "https://github.com/coji/natural-japanese.git",
   "obsidian-bases": "https://github.com/kepano/obsidian-skills.git",
   "obsidian-cli": "https://github.com/kepano/obsidian-skills.git",
   "obsidian-markdown": "https://github.com/kepano/obsidian-skills.git",
   "pdf": "https://github.com/openai/skills.git",
   "playwright": "https://github.com/openai/skills.git",
+  "proofread": "https://github.com/zmoog/skills/tree/main/proofread",
   "scientific-visualization": "https://github.com/K-Dense-AI/scientific-agent-skills.git"
 }
