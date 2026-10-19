@@ -1,6 +1,7 @@
 import contextlib
 import io
 import json
+import os
 from pathlib import Path
 import subprocess
 import sys
@@ -63,7 +64,7 @@ class NotifyTests(unittest.TestCase):
             requests.append(request)
             return MagicMock()
 
-        with patch.object(sys, "argv", ["notify.py", event]):
+        with patch.object(sys, "argv", ["notify.py", event]), patch.dict(os.environ, {"NTFY_TOPIC": "test-topic"}):
             with patch.object(notify.urllib.request, "urlopen", side_effect=receive):
                 self.assertEqual(notify.main(), 0)
             with patch.object(notify.urllib.request, "urlopen", side_effect=TimeoutError("timed out")):

@@ -11,8 +11,6 @@ import time
 import urllib.error
 import urllib.request
 
-TOPIC = "mdy-codex-9f"
-
 
 def is_subagent(thread_id: str, codex_home=None) -> bool:
     home = Path(codex_home or os.environ.get("CODEX_HOME", "~/.codex")).expanduser()
@@ -55,7 +53,7 @@ def notification_payload(data):
     title = f"{project[:30]}｜完了：{task}"
     if len(title) > 100:
         title = title[:99] + "…"
-    return {"topic": os.environ.get("CODEX_NTFY_TOPIC", TOPIC), "title": title,
+    return {"topic": os.environ.get("NTFY_TOPIC", os.environ.get("CODEX_NTFY_TOPIC", "")), "title": title,
             "message": data.get("last-assistant-message") or "Codexのターンが完了しました。",
             "priority": 3}
 
@@ -79,6 +77,8 @@ def main():
             return 0
         if args.dry_run:
             print(json.dumps(payload, ensure_ascii=False))
+            return 0
+        if not payload["topic"]:
             return 0
         request = urllib.request.Request(
             "https://ntfy.sh/", data=json.dumps(payload, ensure_ascii=False).encode("utf-8"),

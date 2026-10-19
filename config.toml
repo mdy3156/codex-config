@@ -1,6 +1,6 @@
 # Shared settings. install.sh generates notify, plugin and marketplace settings.
 model = "gpt-6.1-sol"
-model_reasoning_effort = "max"
+model_reasoning_effort = "xhigh"
 personality = "pragmatic"
 service_tier = "default"
 

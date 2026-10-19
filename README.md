@@ -77,7 +77,7 @@ git diff -- plugins.json
 - 設定とSkillsの配置後にプラグインを更新します。途中で失敗した場合はエラー終了します。原因を解消して再実行してください。導入済みプラグインは自動で巻き戻しません。
 - 一覧にないSkills、認証情報、会話履歴は変更しません。一覧にないプラグインはアンインストールしませんが、設定全体の置き換えにより個別設定は引き継がれません。
 
-マシン固有の絶対パス、プロジェクトの信頼設定、フック承認履歴、`rules/` の環境固有のコマンド許可は導入対象外です。各環境でログイン・外部サービスへの再認証・必要な承認を行ってください。
+マシン固有の絶対パス、プロジェクトの信頼設定、フック承認履歴、`rules/` の実行許可ルールは導入対象外です。各環境でログイン・外部サービスへの再認証・必要な承認を行ってください。
 
 復元する場合はCodexを終了し、表示されたバックアップ内のファイルを元の場所に戻します。導入後の同名ディレクトリやリンクを先に外してから、退避したディレクトリを戻してください。
 
@@ -91,7 +91,7 @@ git diff -- plugins.json
 python3 notify.py --dry-run '{"type":"agent-turn-complete","cwd":"/work/codex-config","input-messages":["通知タイトルを改善して"],"last-assistant-message":"通知を改善しました。"}'
 ```
 
-送信先は既存のntfyトピックを引き継ぎます。Codex起動時の `CODEX_NTFY_TOPIC` 環境変数で変更できます。依頼の先頭行と最終回答はntfyへ送信されます。
+通知を使う場合は、Codex起動時の環境変数に `NTFY_TOPIC="your-private-codex-topic"` を設定してください。未設定・空の場合は送信しません。`NTFY_TOPIC` が未設定の場合のみ、互換用の `CODEX_NTFY_TOPIC` も使えます。設定した場合、依頼の先頭行と最終回答がntfyへ送信されます。デスクトップアプリにもこの環境変数を渡してください。
 
 通知フィールドは [Codexの公式仕様](https://learn.chatgpt.com/docs/config-file/config-advanced)、日本語タイトルの送信形式は [ntfyのJSON API](https://docs.ntfy.sh/publish/#publish-as-json) に従っています。
 
