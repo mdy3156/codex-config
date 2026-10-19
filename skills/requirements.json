@@ -1,7 +1,6 @@
 {
   "defuddle": "https://github.com/kepano/obsidian-skills.git",
   "humanizer": "https://github.com/blader/humanizer.git",
-  "japanese-tech-writing": "https://gist.githubusercontent.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d/raw/SKILL.md",
   "json-canvas": "https://github.com/kepano/obsidian-skills.git",
   "jupyter-notebook": "https://github.com/openai/skills.git",
   "kaggle-cli": "https://github.com/Kaggle/kaggle-cli.git",
@@ -14,5 +13,6 @@
   "pdf": "https://github.com/openai/skills.git",
   "playwright": "https://github.com/openai/skills.git",
   "proofread": "https://github.com/zmoog/skills/tree/main/proofread",
-  "scientific-visualization": "https://github.com/K-Dense-AI/scientific-agent-skills.git"
+  "scientific-visualization": "https://github.com/K-Dense-AI/scientific-agent-skills.git",
+  "yomiyasu": "https://github.com/nanaism/yomiyasu.git"
 }

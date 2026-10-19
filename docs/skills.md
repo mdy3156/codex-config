@@ -11,14 +11,14 @@
 | kaggle-cli | [Kaggle/kaggle-cli](https://github.com/Kaggle/kaggle-cli/tree/main/skills) |
 | ml-paper-writing | [Orchestra-Research/AI-Research-SKILLs](https://github.com/Orchestra-Research/AI-Research-SKILLs/tree/main/20-ml-paper-writing/ml-paper-writing) |
 | scientific-visualization | [K-Dense-AI/scientific-agent-skills](https://github.com/K-Dense-AI/scientific-agent-skills/tree/main/skills/scientific-visualization) |
-| japanese-tech-writing | [k16shikanoのGist](https://gist.github.com/k16shikano/fd287c3133457c4fd8f5601d34aa817d) |
 | natural-japanese | [coji/natural-japanese](https://github.com/coji/natural-japanese) |
+| yomiyasu | [nanaism/yomiyasu](https://github.com/nanaism/yomiyasu) |
 | humanizer | [blader/humanizer](https://github.com/blader/humanizer) |
 | proofread | [zmoog/skills](https://github.com/zmoog/skills/tree/main/proofread) |
 
 以前の独自改変版7個は廃止しました。PDF抽出手順、Notebookの出力先処理、科学図版の追加スクリプト、日本語文章規範の分割などのローカル変更は引き継ぎません。今後は公開元の動作・指示をそのまま利用します。
 
-取得するファイルの範囲はskills CLIに従います。各Skillのライセンスは公開元を参照してください。日本語文章Skillは、Gistの最新版の `SKILL.md` を直接取得します。
+取得するファイルの範囲はskills CLIに従います。各Skillのライセンスは公開元を参照してください。
 
 ## ローカル管理
 
