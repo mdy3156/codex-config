@@ -15,6 +15,7 @@
 | yomiyasu | [nanaism/yomiyasu](https://github.com/nanaism/yomiyasu) |
 | humanizer | [blader/humanizer](https://github.com/blader/humanizer) |
 | proofread | [zmoog/skills](https://github.com/zmoog/skills/tree/main/proofread) |
+| explore-methods, record-knowledge, curate-knowledge, continue-work | [mdy3156/project-workflows](https://github.com/mdy3156/project-workflows) |
 
 以前の独自改変版7個は廃止しました。PDF抽出手順、Notebookの出力先処理、科学図版の追加スクリプト、日本語文章規範の分割などのローカル変更は引き継ぎません。今後は公開元の動作・指示をそのまま利用します。
 
